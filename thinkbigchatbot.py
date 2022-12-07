@@ -133,7 +133,7 @@ class KoGPT2Chat(LightningModule):
                             help='batch size for training (default: 128)')
         parser.add_argument('--lr',
                             type=float,
-                            default=5e-4,
+                            default=5e-5,
                             help='The initial learning rate')
         parser.add_argument('--warmup_ratio',
                             type=float,
@@ -184,7 +184,7 @@ class KoGPT2Chat(LightningModule):
         return torch.LongTensor(data), torch.LongTensor(mask), torch.LongTensor(label)
 
     def train_dataloader(self):
-        data = pd.read_csv('ChatbotData.csv')
+        data = pd.read_csv('ChatbotData.csv') # 경로
         self.train_set = CharDataset(data, max_len=self.hparams.max_len)
         train_dataloader = DataLoader(
             self.train_set, batch_size=self.hparams.batch_size, num_workers=2,
