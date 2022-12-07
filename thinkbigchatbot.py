@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
-parser = argparse.ArgumentParser(description='Simsimi based on KoGPT-2')
+parser = argparse.ArgumentParser(description='Think_big based on KoGPT-2')
 
 parser.add_argument('--chat',
                     action='store_true',
@@ -210,7 +210,7 @@ class KoGPT2Chat(LightningModule):
                     if gen == EOS:
                         break
                     a += gen.replace('▁', ' ')
-                print("Simsimi > {}".format(a.strip()))
+                print("Think_big > {}".format(a.strip()))
 
 
 parser = KoGPT2Chat.add_model_specific_args(parser)
@@ -229,7 +229,7 @@ if __name__ == "__main__":
             mode='min',
             prefix='model_'
         )
-        # python train_torch.py --train --gpus 1 --max_epochs 3
+        # python thinkbigchatbot.py --train --gpus 1 --max_epochs 1
         model = KoGPT2Chat(args)
         model.train()
         trainer = Trainer.from_argparse_args(
