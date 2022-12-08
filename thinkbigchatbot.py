@@ -39,14 +39,13 @@ logger.setLevel(logging.INFO)
 
 U_TKN = '<usr>'
 S_TKN = '<sys>'
-BOS = '</s>'
 EOS = '</s>'
 MASK = '<unused0>'
 SENT = '<unused1>'
 PAD = '<pad>'
 
 TOKENIZER = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
-            bos_token=BOS, eos_token=EOS, unk_token='<unk>',
+            eos_token=EOS, unk_token='<unk>',
             pad_token=PAD, mask_token=MASK) 
 
 
