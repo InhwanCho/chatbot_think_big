@@ -4,7 +4,7 @@
 
 1.해당 파일을 코랩에서 실행합니다.
 
->chatbot_think_big/thinkbig_stuff/최종_실행파일/Thinkbig_chatbot(colab).ipynb
+`chatbot_think_big/thinkbig_stuff/최종_실행파일/Thinkbig_chatbot(colab).ipynb`
 
 2.런타임 유형을 `GPU`로 세팅 후 실행하면 됩니다.
 
