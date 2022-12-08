@@ -71,9 +71,9 @@ class CharDataset(Dataset):
         turn = self._data.iloc[idx]
         q = turn['Q']
         a = turn['A']
-        sentiment = str(turn['label'])
-        q_toked = self.tokenizer.tokenize(self.q_token + q + \
-                                          self.sent_token + sentiment)   
+        # sentiment = str(turn['label'])
+        q_toked = self.tokenizer.tokenize(self.q_token + q )#+ \ # 레이블 버리는 경우 사용할 필요 없음
+                                          #self.sent_token + sentiment)   
         q_len = len(q_toked)
         a_toked = self.tokenizer.tokenize(self.a_token + a + self.eos)
         a_len = len(a_toked)
