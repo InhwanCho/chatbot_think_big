@@ -2,6 +2,6 @@
 
 - 코랩환경 챗봇 실행 동영상입니다.
 
-![my_video](https://user-images.githubusercontent.com/111936229/206358165-d9cc0140-eeaa-44a9-9b52-513a8b497ebf.mov)
+![chatbot_video](https://user-images.githubusercontent.com/111936229/206359380-d67e9e73-4a9e-4f4e-8be8-de9fda70411f.gif)
 
 - testing
