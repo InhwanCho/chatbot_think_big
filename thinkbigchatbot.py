@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-import argparse
-import logging
-
+import argparse #parse하는 함수
+import logging  #log 기록하는 함수
+import re
 import numpy as np
 import pandas as pd
 import torch
-from pytorch_lightning import Trainer
+from pytorch_lightning import Trainer 
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.lightning import LightningModule
 from torch.utils.data import DataLoader, Dataset
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
+# 파이썬에 인자값 추가하기(정보 추가)
 parser = argparse.ArgumentParser(description='Think_big based on KoGPT-2')
 
 parser.add_argument('--chat',
@@ -19,10 +20,11 @@ parser.add_argument('--chat',
                     default=False,
                     help='response generation on given user input')
 
-parser.add_argument('--sentiment',
-                    type=str,
-                    default='0',
-                    help='sentiment for system. 0 is neutral, 1 is negative, 2 is positive.')
+# 감정 사용 안함
+# parser.add_argument('--sentiment',
+#                     type=str,
+#                     default='0',
+#                     help='sentiment for system. 0 is neutral, 1 is negative, 2 is positive.')
 
 parser.add_argument('--model_params',
                     type=str,
@@ -34,23 +36,28 @@ parser.add_argument('--train',
                     default=False,
                     help='for training')
 
+#log출력
 logger = logging.getLogger()
+#INFO메시지까지 출력하는 세팅 메시지
 logger.setLevel(logging.INFO)
 
-U_TKN = '<usr>'
+#토큰
+U_TKN = '<usr>'#모르는 단어
 S_TKN = '<sys>'
-BOS = '</s>'
-EOS = '</s>'
+BOS = '</s>'#문장의 시작
+EOS = '</s>'#문장의 끝
 MASK = '<unused0>'
 SENT = '<unused1>'
 PAD = '<pad>'
 
+#hugging_face의 KoGPT2(이미 학습된 데이터)를 가져옴
 TOKENIZER = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
             eos_token=EOS, unk_token='<unk>',
             pad_token=PAD, mask_token=MASK) 
 
-
+#데이터셋 클래스 상속
 class CharDataset(Dataset):
+    ## 데이터셋의 전처리를 해주는 부분
     def __init__(self, chats, max_len=32):
         self._data = chats
         self.first = True
@@ -67,30 +74,37 @@ class CharDataset(Dataset):
     def __len__(self):
         return len(self._data)
 
+#Q,A만 사용하여 파인튜닝을 위한 토큰화(인덱스(idx)에 해당하는 입출력 데이터 반환)
     def __getitem__(self, idx):
         turn = self._data.iloc[idx]
-        q = turn['Q']
-        a = turn['A']
-        sentiment = str(turn['label'])
-        q_toked = self.tokenizer.tokenize(self.q_token + q + \
-                                          self.sent_token + sentiment)   
+        q = turn['Q'] #질문
+        # q = re.sub(r"([?.!,])", r" ", q)
+        a = turn['A'] #답변
+        # a = re.sub(r"([?.!,])", r" ", a)
+
+        q_toked = self.tokenizer.tokenize(self.q_token + q)
         q_len = len(q_toked)
         a_toked = self.tokenizer.tokenize(self.a_token + a + self.eos)
         a_len = len(a_toked)
+
+        #질문의 길이 + 답변의 길이가 최대길이보다 크면
         if q_len + a_len > self.max_len:
-            a_len = self.max_len - q_len
-            if a_len <= 0:
+            a_len = self.max_len - q_len #답변의 길이를 최대길이 - 질문길이
+            if a_len <= 0: #질문의 길이가 너무 길어 질문만으로 최대 길이를 초과 되면
                 q_toked = q_toked[-(int(self.max_len/2)):]
                 q_len = len(q_toked)
-                a_len = self.max_len - q_len
+                a_len = self.max_len - q_len #답변의 길이 == 최대길이 - 질문길이
                 assert a_len > 0
             a_toked = a_toked[:a_len]
             a_len = len(a_toked)
             assert a_len == len(a_toked), f'{a_len} ==? {len(a_toked)}'
-        # [mask, mask, ...., mask, ..., <bos>,..A.. <eos>, <pad>....]
+# [mask, mask, ...., mask, ..., <bos>,..답변.. <eos>, <pad>....] 이런식으로 출력됨
+
+        #답변 
         labels = [
             self.mask,
         ] * q_len + a_toked[1:]
+        #로깅함수
         if self.first:
             logging.info("contexts : {}".format(q))
             logging.info("toked ctx: {}".format(q_toked))
@@ -109,7 +123,13 @@ class CharDataset(Dataset):
         return(token_ids, np.array(mask),
                labels_ids)
 
-
+#LightningModule 클래스를 상속
+#Computations (init)
+#Train loop (training_step)
+#Validation loop (validation_step)
+#Test loop (test_step)
+#Prediction loop (predict_step)
+#Optimizers (configure_optimizers))
 class KoGPT2Chat(LightningModule):
     def __init__(self, hparams, **kwargs):
         super(KoGPT2Chat, self).__init__()
@@ -118,6 +138,7 @@ class KoGPT2Chat(LightningModule):
         self.kogpt2 = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
         self.loss_function = torch.nn.CrossEntropyLoss(reduction='none')
 
+#정적인 메소드(self를 사용하지 않아서 변수가 일정)
     @staticmethod
     def add_model_specific_args(parent_parser):
         # add model specific args
@@ -156,6 +177,7 @@ class KoGPT2Chat(LightningModule):
         self.log('train_loss', loss_avg)
         return loss_avg
 
+#파인튜닝
     def configure_optimizers(self):
         # Prepare optimizer
         param_optimizer = list(self.named_parameters())

@@ -17,5 +17,5 @@
 - 1epch당 약 3시간이 걸리므로 유료버전에서 돌려보는 것을 추천(아니면 중간에 끊길 확률이 높습니다.)
 
 - 참고 : <[KoGPT2-chatbo]>
-
+  
 [KoGPT2-chatbo]: ttps://github.com/haven-jeon/KoGPT2-chatbo
