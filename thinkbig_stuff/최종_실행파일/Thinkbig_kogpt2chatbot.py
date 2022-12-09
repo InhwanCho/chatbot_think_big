@@ -138,7 +138,7 @@ for epoch in range(epoch):
         avg_loss = loss.sum() / mask.sum()
         avg_loss.backward()
         # 학습 끝
-        optimizer.step()
+        optimizer.step()#경사하강법(gradient descent)
 print ('학습 종료')
 
 ### 챗봇 실행 'quit' 입력 시 종료
