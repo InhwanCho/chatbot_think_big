@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from transformers.optimization import AdamW
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 import re
+import tqdm
 
 # 스페셜 토큰
 U_TKN = '<usr>' #Qusetion토큰
@@ -15,13 +16,13 @@ S_TKN = '<sys>' #Answer토큰
 BOS = '</s>'#문장의 시작 토큰  #보통 <s>를 사용??
 EOS = '</s>'#문장의 끝 토큰
 MASK = '<unused0>'#마스크 토큰
-SENT = '<unused1>'#문장 토큰??
+SENT = '<unused1>'#문장 토큰(Q와 A토큰 사이에 넣어서 구분)
 PAD = '<pad>' #패드 토큰
 
 # #hugging_face의 KoGPT2(이미 학습된 데이터)를 가져옴
 koGPT2_TOKENIZER = PreTrainedTokenizerFast.from_pretrained('skt/kogpt2-base-v2',
             bos_token=BOS, eos_token=EOS, unk_token='<unk>',
-            pad_token=PAD, mask_token=MASK) 
+            pad_token=PAD, mask_token=MASK)
 model = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
 
 # 파라미터, 크로스엔트로피로스, 옵티마이저(아담)
@@ -116,6 +117,7 @@ df=df[['Q','A']]
 df = df.iloc[:100,:]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(f'GPU 사용 가능한가요 ? :{torch.cuda.is_available()}')
 train_set = ChatbotDataset(df, max_len=40)
 #윈도우 환경에서 num_workers 는 무조건 0으로 지정
 train_dataloader = DataLoader(train_set, batch_size=32, num_workers=0, shuffle=True, collate_fn=collate_batch)
@@ -123,7 +125,7 @@ model.to(device)
 model.train()
 
 print ('start')
-for epoch in range(epoch):
+for epoch in tqdm(range(epoch)):
     for batch_idx, samples in enumerate(train_dataloader):
         optimizer.zero_grad()
         token_ids, mask, label = samples
@@ -141,7 +143,7 @@ print ('end')
 
 ### 챗봇 실행 'quit' 입력 시 종료
 with torch.no_grad():
-    while 1:
+    while 1 :
         q = input('나 > ').strip()
         if q == 'quit':
             break
@@ -155,4 +157,3 @@ with torch.no_grad():
                 break
             a += gen.replace('▁', ' ')
         print('Thinkbig_chatbot > {}'.format(a.strip()))
-        
