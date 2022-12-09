@@ -56,8 +56,14 @@
 - 1epch당 약 3시간이 걸리므로 유료버전에서 돌려보는 것을 추천(아니면 중간에 끊길 확률이 높습니다.)
 
 - 참고 : <[KoGPT2-chatbo]>
-  
+- 참고 : <[ebbn]>
+- 참고 : <[NLP-kr]>
+- 참고 : <[이수한컴퓨터연구소]>
+
 [KoGPT2-chatbo]: ttps://github.com/haven-jeon/KoGPT2-chatbo
+[ebbn] : <https://ebbnflow.tistory.com/151>
+[NLP-kr] : <https://github.com/NLP-kr/tensorflow-ml-nlp-tf2>
+[이수한컴퓨터연구소] : <https://www.youtube.com/watch?v=LEtLfx1dS7Q>
 
 - BERT는 위에서 소개한 3가지의 입력 임베딩(Token, Segment, Position 임베딩)을 취합하여 하나의 임베딩 값으로 생성
 - 임베딩의 합에 Layer Normalization과 Dropout을 적용하여 입력으로 사용
