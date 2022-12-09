@@ -2,6 +2,8 @@
 
 ## Bert 구조
 
+- Bert는 3가지의 입력 임베딩(Token, Segment, Position 임베딩)의 합으로 구성
+
 ![Bert input representation](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbABsUL%2FbtqzmTU7OLm%2FYwK6JLhNfTYvxkiFzkfkCK%2Fimg.png)
 
 ### Token Embeddings
