@@ -1,4 +1,4 @@
-# 씽크빅 챗봇 테스트 입니다
+# 씽크빅 챗봇 프로젝트입니다.(KoGPT2,SBRT 사용)
 
 ## Bert 구조
 
@@ -33,6 +33,8 @@
 - BERT는 위에서 소개한 3가지의 입력 임베딩(Token, Segment, Position 임베딩)을 취합하여 하나의 임베딩 값으로 생성
 - 임베딩의 합에 Layer Normalization과 Dropout을 적용하여 입력으로 사용
 
+![파인튜닝 구조](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbg5SlP%2FbtqzntBU7Uj%2FKHWiKI4zKgb8FqLzAYAusK%2Fimg.png)
+
 ### MLM(Masked Language Model)
 
 ![학습 방법](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FLMyXN%2Fbtqzl4Ql7sH%2FykzRZNWkc6rcb8ffU5Nrm1%2Fimg.png)
@@ -59,5 +61,3 @@
 
 - BERT는 위에서 소개한 3가지의 입력 임베딩(Token, Segment, Position 임베딩)을 취합하여 하나의 임베딩 값으로 생성
 - 임베딩의 합에 Layer Normalization과 Dropout을 적용하여 입력으로 사용
-
-![파인튜닝 구조](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbg5SlP%2FbtqzntBU7Uj%2FKHWiKI4zKgb8FqLzAYAusK%2Fimg.png)
