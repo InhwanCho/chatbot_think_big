@@ -49,7 +49,7 @@
 
 3.코랩 환경에서 챗봇 실행 동영상입니다.
 
-[![챗봇 구동 영상]("https://user-images.githubusercontent.com/111936229/206372581-a6da8be0-91fa-41d9-b28c-b7574ca9d0af.png")](https://youtu.be/HHClT36nYT8)
+[![코랩 챗봇 구동 영상](https://user-images.githubusercontent.com/111936229/206372581-a6da8be0-91fa-41d9-b28c-b7574ca9d0af.png)](https://youtu.be/HHClT36nYT8)
 
 - 버전 문제로 로컬 환경에서는 계속 오류가 나네요
 - 실행 시 에러가 날때도 있고 아닐 때도 있긴한데 이유를 모르겠습니다.
