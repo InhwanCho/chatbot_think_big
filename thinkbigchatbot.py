@@ -20,7 +20,7 @@ parser.add_argument('--chat',
                     default=False,
                     help='response generation on given user input')
 
-# 감정 사용 안함
+# 감정 사용 안함(감정 사용 시 주석 풀어서 사용하기)
 # parser.add_argument('--sentiment',
 #                     type=str,
 #                     default='0',
@@ -138,7 +138,7 @@ class KoGPT2Chat(LightningModule):
         self.kogpt2 = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
         self.loss_function = torch.nn.CrossEntropyLoss(reduction='none')
 
-#정적인 메소드(self를 사용하지 않아서 변수가 일정)
+#정적인 메소드(self를 사용하지 않아서 변수가 일정) - 인터프리터용 함수
     @staticmethod
     def add_model_specific_args(parent_parser):
         # add model specific args
