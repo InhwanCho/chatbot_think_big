@@ -1,3 +1,4 @@
+#Thinkbig_KoGPT2_fine_tunning
 import numpy as np
 import pandas as pd
 import torch
@@ -158,4 +159,4 @@ with torch.no_grad(): #requires_grad=False 상태가 되어 메모리 사용량 
             if gen == EOS:
                 break
             a += gen.replace('▁', ' ')
-        print('Chatbot > {}'.format(a.strip())) 
+        print('Chatbot > {}'.format(a.strip()))
