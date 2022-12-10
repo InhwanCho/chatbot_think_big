@@ -2,7 +2,9 @@
 
 ## Bert 구조
 
-- Bert는 3가지의 입력 임베딩(Token, Segment, Position 임베딩)의 합으로 구성
+- Fine Tunning(파인튜닝)을 하기 위해서는 기존의 학습되기 전의 데이터 타입으로 바꿔 줄 필요가 있습니다.
+- 즉 파인튜닝을 위해서는 Bert방식의 데이터 정제가 필요합니다.
+- Bert는 아래의 그림과 같이 3가지의 입력 임베딩(Token, Segment, Position 임베딩)의 합으로 구성되어 학습된 모델입니다.
 
 ![Bert input representation](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbABsUL%2FbtqzmTU7OLm%2FYwK6JLhNfTYvxkiFzkfkCK%2Fimg.png)
 
@@ -16,21 +18,17 @@
 
 ### Sentence Embeddings
 
-- BERT는 두 개의 문장을 문장 구분자([SEP])와 함께 결합
-- 입력 길이의 제한으로 두 문장은 합쳐서 512 subword 이하로 제한
-- 입력의 길이가 길어질수록 학습시간은 제곱으로 증가하기 때문에 적절한 입력 길이 설정 필요
-- 한국어는 보통 평균 20 subword로 구성되고 99%가 60 subword를 넘지 않기 때문에 입력 길이를 두 문장이 합쳐 128로 해도 충분
+- BERT는 두 개의 문장을 문장 구분자([SEP],스페셜 토큰)와 함께 결합
+- 한국어는 보통 평균 20 subword로 구성되고 99%가 60 subword를 넘지 않기 때문에 입력 길이를 두 문장이 합쳐 128(max_len)으로 설정 해도 충분합니다
 - 간혹 긴 문장이 있으므로 우선 입력 길이 128로 제한하고 학습한 후, 128보다 긴 입력들을 모아 마지막에 따로 추가 학습하는 방식을 사용
 
 ### Position Embedding
 
-- BERT는 저자의 이전 논문인 Transformer 모델을 착용
-- Transformer은 주로 사용하는 CNN, RNN 모델을 사용하지 않고 Self-Attention 모델을 사용
-- Self-Attention은 입력의 위치에 대해 고려하지 못하므로 입력 토큰의 위치 정보가 필요
-- Transformer 에서는 Sinusoid 함수를 이용한 Positional encoding을 사용하였고, BERT에서는 이를 변형하여 Position encoding을 사용
+- BERT는 Transformer 모델을 착용 그 중 Self-Attention 모델을 사용
+- Self-Attention은 입력의 위치에 대해 고려하지 못하므로 입력 토큰의 위치 정보가 필요(position embedding필요성)
 - Position encoding은 단순하게 Token 순서대로 0, 1, 2, ...와 같이 순서대로 인코딩
 
-### 임베딩 취합
+## Fine Tunning의 2가지 대표적인 방법
 
 - BERT는 위에서 소개한 3가지의 입력 임베딩(Token, Segment, Position 임베딩)을 취합하여 하나의 임베딩 값으로 생성
 - 임베딩의 합에 Layer Normalization과 Dropout을 적용하여 입력으로 사용
@@ -39,7 +37,27 @@
 
 ### MLM(Masked Language Model)
 
+- 입력 문장에서 임의로 Token을 마스킹(masking), 그 Token을 맞추는 방식인 MLM 학습 진행
+- 문장의 빈칸 채우기 문제를 학습
+- 생성 모델 계열은(예를들어 GPT) 입력의 다음 단어를 예측
+- MLM은 문장 내 랜덤한 단어를 마스킹 하고 이를 예측
+- 입력의 15% 단어를 [MASK] Token으로 바꿔주어 마스킹
+- 이 때 80%는 [MASK]로 바꿔주지만, 나머지 10%는 다른 랜덤 단어로, 또 남은 10%는 바꾸지 않고 그대로 둠
+- 이는 튜닝 시 올바른 예측을 돕도록 마스킹에 노이즈를 섞음
+
 ![학습 방법](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FLMyXN%2Fbtqzl4Ql7sH%2FykzRZNWkc6rcb8ffU5Nrm1%2Fimg.png)
+
+### NSP(Next Sentence Prediction)
+
+- NSP는 두 문장이 주어졌을 때 두 번째 문장이 첫 번째 문장의 바로 다음에 오는 문장인지 여부를 예측하는 방식
+- 두 문장 간 관련이 고려되어야 하는 NLI와 QA의 파인튜닝을 위해 두 문장이 연관이 있는지를 맞추도록 학습
+- 위에서 설명한 MLM과 동시에 NSP도 적용된 문장들
+- 첫 번째 문장과 두 번째 문장은 [SEP]로 구분(스페셜 토큰)
+- 두 문장이 실제로 연속하는지는 50% 비율로 참인 문장과, 50%의 랜덤하게 추출된 상관 없는 문장으로 구성
+- 이 학습을 통해 문맥과 순서를 학습 가능
+- 아래 그림은 NSP의 입력 예시
+
+![NSP(des)](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FmRPzz%2Fbtqzps28Eyd%2F2ak5AHBLlk1jXHnOgGwyMK%2Fimg.png)
 
 #### 코랩 환경에서 챗봇 실행 방법
 
